@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Collection;
 
 import com.bigbass.recex.RecipeExporterMod;
 import com.bigbass.recex.recipes.gregtech.GregtechMachine;
@@ -22,7 +23,7 @@ import com.google.gson.GsonBuilder;
 
 import gregtech.api.util.GT_LanguageManager;
 import gregtech.api.util.GT_Recipe;
-import gregtech.api.util.GT_Recipe.GT_Recipe_Map;
+import gregtech.api.recipe.RecipeMap;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
@@ -96,16 +97,18 @@ public class RecipeExporter {
 		data.put("type", "gregtech");
 		
 		List<GregtechMachine> machines = new ArrayList<GregtechMachine>();
-		for(GT_Recipe_Map map : GT_Recipe_Map.sMappings){
+		for(RecipeMap map : RecipeMap.ALL_RECIPE_MAPS.values()){
 			GregtechMachine mach = new GregtechMachine();
 			
 			// machine name retrieval
-			mach.n = GT_LanguageManager.getTranslation(map.mUnlocalizedName);
+			mach.n = GT_LanguageManager.getTranslation(map.unlocalizedName);
 			if(mach.n == null || mach.n.isEmpty()){
-				mach.n = map.mUnlocalizedName;
+				mach.n = map.unlocalizedName;
 			}
 			
-			for(GT_Recipe rec : map.mRecipeList){
+			Collection<GT_Recipe> coll = map.getAllRecipes();
+			//for(GT_Recipe rec : map.getAllRecipes()){
+			for(GT_Recipe rec : coll){
 				GregtechRecipe gtr = new GregtechRecipe();
 				gtr.en = rec.mEnabled;
 				gtr.dur = rec.mDuration;
